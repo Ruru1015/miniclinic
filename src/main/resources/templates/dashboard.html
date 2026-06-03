@@ -15,6 +15,10 @@
         .status-BOOKED    { color: #F59E0B; font-weight: bold; }
         .status-COMPLETED { color: #10B981; font-weight: bold; }
         .status-CANCELLED { color: #94A3B8; }
+        .btn-complete { background: #10B981; color: white; padding: 4px 10px; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+        .btn-complete:hover { background: #059669; }
+        .btn-cancel { background: #94A3B8; color: white; padding: 4px 10px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-cancel:hover { background: #64748B; }
     </style>
 </head>
 <body>
@@ -39,6 +43,7 @@
                 <th>病患</th>
                 <th>病歷號</th>
                 <th>狀態</th>
+                <th>操作</th>
             </tr>
         </thead>
         <tbody>
@@ -50,11 +55,42 @@
                     <span th:text="${appt.status}"
                           th:class="${'status-' + appt.status}">BOOKED</span>
                 </td>
+                <td>
+                    <!-- 只在預約狀態 (BOOKED) 顯示操作按鈕 -->
+                    <div th:if="${appt.status == 'BOOKED'}">
+                        <button class="btn-complete" th:onclick="|updateStatus(${appt.apptId}, 'COMPLETED')|">看診完成</button>
+                        <button class="btn-cancel" th:onclick="|updateStatus(${appt.apptId}, 'CANCELLED')|">取消</button>
+                    </div>
+                </td>
             </tr>
         </tbody>
     </table>
         <p style="text-align: center; margin-top: 20px;">
         <a th:href="@{/}">← 回首頁</a>
     </p>
+
+    <script>
+        function updateStatus(id, newStatus) {
+            const actionText = newStatus === 'COMPLETED' ? '看診完成' : '取消';
+            if (!confirm('確定將此掛號標記為' + actionText + '？')) return;
+
+            fetch('/api/appointments/' + id + '/status', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload(); // 成功後重新整理頁面
+                } else {
+                    alert('更新失敗，請稍後再試。');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('發生錯誤。');
+            });
+        }
+    </script>
 </body>
 </html>
