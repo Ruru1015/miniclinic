@@ -2,7 +2,6 @@ package tw.edu.fju.miniclinic.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import tw.edu.fju.miniclinic.model.AppointmentRepository;
 import tw.edu.fju.miniclinic.model.DoctorRepository;
 import tw.edu.fju.miniclinic.model.PatientRepository;
@@ -10,7 +9,11 @@ import tw.edu.fju.miniclinic.model.PatientRepository;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@RestController
+/**
+ * 此檔案已廢棄。
+ * 所有的統計 API 功能已遷移至 StatsController.java。
+ * 移除 @RestController 註解以避免路由衝突。
+ */
 public class StatsApiController {
 
     private final DoctorRepository doctorRepo;
